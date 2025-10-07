@@ -4,7 +4,7 @@ import crypto from "crypto"
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now()
-  const supabase = createClient()
+  const supabase = await createClient()
 
   try {
     // Get request details
