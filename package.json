@@ -1,13 +1,13 @@
 {
   "name": "rent-payment-reconciliation-dashboard",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "next build",
     "dev": "next dev",
-    "lint": "next lint",
-    "start": "next start"
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -41,7 +41,6 @@
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
     "@vercel/analytics": "latest",
-    "@vitejs/plugin-react-swc": "latest",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.1.1",
@@ -51,14 +50,11 @@
     "geist": "latest",
     "input-otp": "1.4.2",
     "jiti": "latest",
-    "jsr:": "supabase",
     "less": "latest",
     "lightningcss": "latest",
     "lucide-react": "^0.454.0",
     "next": "15.2.4",
     "next-themes": "latest",
-    "npm:hono": "latest",
-    "path": "latest",
     "react": "^19",
     "react-day-picker": "8.10.1",
     "react-dom": "^19",
@@ -75,9 +71,9 @@
     "terser": "latest",
     "tsx": "latest",
     "vaul": "1.1.2",
-    "vite": "latest",
     "yaml": "latest",
-    "zod": "3.25.67"
+    "zod": "3.25.67",
+    "hono": "latest"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.9",
