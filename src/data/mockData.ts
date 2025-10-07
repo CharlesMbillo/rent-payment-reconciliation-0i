@@ -84,19 +84,39 @@ const generateTenant = (name: string): Tenant => ({
   kycStatus: Math.random() > 0.1 ? "Verified" : "Pending",
 })
 
-const generateUnitsForProperty = (propertyId: string, totalUnits: number): Unit[] => {
+const BLOCK_CONFIGS = [
+  { id: "A", name: "Block A", total: 224, perFloor: 28, lastFloor: 28 },
+  { id: "B", name: "Block B", total: 231, perFloor: 28, lastFloor: 7 },
+  { id: "C", name: "Block C", total: 224, perFloor: 28, lastFloor: 28 },
+  { id: "D", name: "Block D", total: 358, perFloor: 42, lastFloor: 22 },
+  { id: "E", name: "Block E", total: 350, perFloor: 42, lastFloor: 14 },
+  { id: "F", name: "Block F", total: 234, perFloor: 28, lastFloor: 10 },
+  { id: "G", name: "Block G", total: 234, perFloor: 28, lastFloor: 10 },
+  { id: "H", name: "Block H", total: 74, perFloor: 9, lastFloor: 2 },
+]
+
+const generateUnitsForProperty = (
+  propertyId: string,
+  totalUnits: number,
+  unitsPerFloor: number,
+  lastFloorUnits: number,
+): Unit[] => {
   const units: Unit[] = []
-  const unitsPerFloor = 28 // Based on Property A having 28 units per floor
   const totalFloors = Math.ceil(totalUnits / unitsPerFloor)
 
   let nameIndex = 0
+  let roomCount = 0
 
-  for (let floor = 0; floor < totalFloors; floor++) {
-    const unitsOnThisFloor = Math.min(unitsPerFloor, totalUnits - floor * unitsPerFloor)
+  // Generate units for floors 0-7 (Ground Floor to 7th Floor)
+  for (let floor = 0; floor < 8 && roomCount < totalUnits; floor++) {
+    const unitsOnThisFloor =
+      floor === 7 && totalUnits > unitsPerFloor * 8
+        ? Math.min(unitsPerFloor, totalUnits - roomCount)
+        : Math.min(unitsPerFloor, totalUnits - roomCount)
 
-    for (let unitOnFloor = 1; unitOnFloor <= unitsOnThisFloor; unitOnFloor++) {
+    for (let unitOnFloor = 1; unitOnFloor <= unitsOnThisFloor && roomCount < totalUnits; unitOnFloor++) {
       const roomNumber = `${propertyId}${floor.toString().padStart(2, "0")}${unitOnFloor.toString().padStart(2, "0")}`
-      const isShop = floor === 0 && Math.random() > 0.7 // Ground floor shops
+      const isShop = floor === 0 && Math.random() > 0.8 // Ground floor shops (20% chance)
       const type: "Residential" | "Shop" = isShop ? "Shop" : "Residential"
       const rent = type === "Shop" ? 8000 : 4500
       const status = getRandomStatus()
@@ -134,14 +154,65 @@ const generateUnitsForProperty = (propertyId: string, totalUnits: number): Unit[
       }
 
       units.push(unit)
+      roomCount++
+    }
+  }
+
+  // Handle 8th floor if there are remaining rooms
+  if (roomCount < totalUnits && lastFloorUnits > 0) {
+    for (let unitOnFloor = 1; unitOnFloor <= lastFloorUnits && roomCount < totalUnits; unitOnFloor++) {
+      const roomNumber = `${propertyId}08${unitOnFloor.toString().padStart(2, "0")}`
+      const type: "Residential" | "Shop" = "Residential"
+      const rent = 4500
+      const status = getRandomStatus()
+
+      const unit: Unit = {
+        id: `unit-${roomNumber}`,
+        roomNumber,
+        type,
+        rent,
+        status,
+        floor: 8, // 8th floor
+        dueDate: "2025-01-05",
+      }
+
+      if (status !== "Vacant" && nameIndex < KENYAN_NAMES.length) {
+        unit.tenant = generateTenant(KENYAN_NAMES[nameIndex])
+        nameIndex++
+
+        if (status !== "Vacant") {
+          const paymentAmount = status === "Partial" ? rent * 0.6 : rent
+          unit.lastPayment = {
+            id: `payment-${unit.id}`,
+            tenantId: unit.tenant.id,
+            unitId: unit.id,
+            amount: paymentAmount,
+            dueAmount: rent,
+            paymentDate: status === "Overdue" ? "2024-12-05" : "2025-01-03",
+            dueDate: unit.dueDate,
+            status: status === "Vacant" ? "Overdue" : status,
+            transactionRef: `TXN${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+            paymentMethod: Math.random() > 0.5 ? "M-Pesa" : "Jenga PGW",
+          }
+        }
+      }
+
+      units.push(unit)
+      roomCount++
     }
   }
 
   return units
 }
 
-const createProperty = (id: string, name: string, totalUnits: number): Property => {
-  const units = generateUnitsForProperty(id, totalUnits)
+const createProperty = (
+  id: string,
+  name: string,
+  totalUnits: number,
+  perFloor: number,
+  lastFloor: number,
+): Property => {
+  const units = generateUnitsForProperty(id, totalUnits, perFloor, lastFloor)
   const floors: { [key: number]: Unit[] } = {}
 
   units.forEach((unit) => {
@@ -168,16 +239,9 @@ const createProperty = (id: string, name: string, totalUnits: number): Property 
   }
 }
 
-export const properties: Property[] = [
-  createProperty("A", "Block A", 224),
-  createProperty("B", "Block B", 200),
-  createProperty("C", "Block C", 180),
-  createProperty("D", "Block D", 200),
-  createProperty("E", "Block E", 200),
-  createProperty("F", "Block F", 190),
-  createProperty("G", "Block G", 200),
-  createProperty("H", "Block H", 74),
-]
+export const properties: Property[] = BLOCK_CONFIGS.map((config) =>
+  createProperty(config.id, config.name, config.total, config.perFloor, config.lastFloor),
+)
 
 export const auditLogs: AuditLog[] = [
   {
@@ -217,7 +281,7 @@ export const connectionStatus: ConnectionStatus = {
 export const currentUser: User = {
   id: "user-1",
   name: "Admin User",
-  email: "admin@rentroll.co.ke",
+  email: "admin@rentflow.co.ke",
   role: "Admin",
 }
 

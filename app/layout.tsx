@@ -7,7 +7,7 @@ import "./globals.css"
 import { Suspense } from "react"
 
 export const metadata: Metadata = {
-  title: "Rent Payment Reconciliation Dashboard",
+  title: "RentFlow Dashboard",
   description: "Manage rent payments, properties, and tenants with real-time IPN integration",
   generator: "v0.app",
 }

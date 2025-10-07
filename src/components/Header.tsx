@@ -1,56 +1,44 @@
-import React from 'react';
-import { Button } from './ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Badge } from './ui/badge';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
-} from './ui/dropdown-menu';
-import { Moon, Sun, Menu, Settings, User, LogOut, Bell } from 'lucide-react';
-import { ConnectionStatusIndicator } from './ConnectionStatusIndicator';
-import { ConnectionStatus, User as UserType } from '../types';
+"use client"
+import { Button } from "./ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
+import { Badge } from "./ui/badge"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu"
+import { Moon, Sun, Menu, Settings, User, LogOut, Bell } from "lucide-react"
+import { ConnectionStatusIndicator } from "./ConnectionStatusIndicator"
+import type { ConnectionStatus, User as UserType } from "../types"
 
 interface HeaderProps {
-  user: UserType;
-  connectionStatus: ConnectionStatus;
-  onModeChange: (isLive: boolean) => void;
-  onMenuToggle: () => void;
-  isDarkMode: boolean;
-  onThemeToggle: () => void;
+  user: UserType
+  connectionStatus: ConnectionStatus
+  onModeChange: (isLive: boolean) => void
+  onMenuToggle: () => void
+  isDarkMode: boolean
+  onThemeToggle: () => void
 }
 
-export function Header({ 
-  user, 
-  connectionStatus, 
-  onModeChange, 
-  onMenuToggle, 
-  isDarkMode, 
-  onThemeToggle 
-}: HeaderProps) {
+export function Header({ user, connectionStatus, onModeChange, onMenuToggle, isDarkMode, onThemeToggle }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4">
         {/* Left side */}
         <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onMenuToggle}
-            className="lg:hidden"
-          >
+          <Button variant="ghost" size="sm" onClick={onMenuToggle} className="lg:hidden">
             <Menu className="h-5 w-5" />
           </Button>
-          
+
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">RR</span>
+              <span className="text-white font-bold text-sm">RF</span>
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg font-semibold">RentRoll Dashboard</h1>
+              <h1 className="text-lg font-semibold">RentFlow Dashboard</h1>
               <p className="text-xs text-muted-foreground">Smart Payment Reconciliation</p>
             </div>
           </div>
@@ -58,10 +46,7 @@ export function Header({
 
         {/* Center - Connection Status */}
         <div className="hidden md:flex">
-          <ConnectionStatusIndicator 
-            status={connectionStatus} 
-            onModeChange={onModeChange} 
-          />
+          <ConnectionStatusIndicator status={connectionStatus} onModeChange={onModeChange} />
         </div>
 
         {/* Right side */}
@@ -69,8 +54,8 @@ export function Header({
           {/* Notifications */}
           <Button variant="ghost" size="sm" className="relative">
             <Bell className="h-5 w-5" />
-            <Badge 
-              variant="destructive" 
+            <Badge
+              variant="destructive"
               className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
             >
               3
@@ -78,16 +63,8 @@ export function Header({
           </Button>
 
           {/* Theme Toggle */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onThemeToggle}
-          >
-            {isDarkMode ? (
-              <Sun className="h-5 w-5" />
-            ) : (
-              <Moon className="h-5 w-5" />
-            )}
+          <Button variant="ghost" size="sm" onClick={onThemeToggle}>
+            {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>
 
           {/* User Menu */}
@@ -95,9 +72,12 @@ export function Header({
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                 <Avatar className="h-9 w-9">
-                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.name} />
                   <AvatarFallback>
-                    {user.name.split(' ').map(n => n[0]).join('')}
+                    {user.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
                   </AvatarFallback>
                 </Avatar>
               </Button>
@@ -106,9 +86,7 @@ export function Header({
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none">{user.name}</p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    {user.email}
-                  </p>
+                  <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
                   <Badge variant="outline" className="w-fit mt-1">
                     {user.role}
                   </Badge>
@@ -135,11 +113,8 @@ export function Header({
 
       {/* Mobile Connection Status */}
       <div className="md:hidden border-t bg-muted/50 px-4 py-2">
-        <ConnectionStatusIndicator 
-          status={connectionStatus} 
-          onModeChange={onModeChange} 
-        />
+        <ConnectionStatusIndicator status={connectionStatus} onModeChange={onModeChange} />
       </div>
     </header>
-  );
+  )
 }
