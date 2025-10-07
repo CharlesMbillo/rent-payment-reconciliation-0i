@@ -98,7 +98,7 @@ CREATE TRIGGER trigger_update_ipn_statistics
 -- Insert default configuration
 INSERT INTO ipn_config (webhook_url, webhook_secret, is_active)
 VALUES (
-  'https://your-domain.com/api/jenga/ipn',
+  'unhonoured-carisa-pseudodiphtheric.ngrok-free.dev',
   'your-webhook-secret-key-change-this',
   true
 )
